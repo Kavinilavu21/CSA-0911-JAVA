@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Smart Parking Management System (SPMS)
 ### **Java Programming CO1 Assignment Project**
 
@@ -127,3 +128,6 @@ smart-parking-system/
 - The system automatically initializes rich, realistic campus demo records upon first launch using `localStorage`.
 - Includes registered student/faculty vehicles, active parked bays on various floors, historical completed tickets, and revenue audits.
 - You can reset the demo data back to factory defaults at any time by clicking the **"Reset Demo Data"** button in the header or footer.
+=======
+# CSA-0911-JAVA
+>>>>>>> 52a079e6aeb55c36d13be890f8917daccc838cf9
