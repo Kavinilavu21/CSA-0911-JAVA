@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Parking Management System | Java Programming CO1</title>
+  
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- =====================================================================
+         SIDEBAR NAVIGATION
+         ===================================================================== -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-wrapper">
+          <div class="brand-icon">
+            <i class="fa-solid fa-square-parking"></i>
+          </div>
+          <div class="brand-text">
+            <span class="brand-name">SmartPark</span>
+            <span class="brand-tag">Campus Management</span>
+          </div>
+        </div>
+        <button class="sidebar-toggle-btn" id="sidebar-toggle-btn" title="Toggle Sidebar">
+          <i class="fa-solid fa-bars-staggered"></i>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Overview</div>
+        <a href="#home" class="nav-link active" onclick="navigateTo('home')">
+          <i class="fa-solid fa-house"></i>
+          <span class="nav-text">Home</span>
+        </a>
+        <a href="#dashboard" class="nav-link" onclick="navigateTo('dashboard')">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span class="nav-text">Dashboard</span>
+        </a>
+
+        <div class="nav-section-title">Operations</div>
+        <a href="#vehicles" class="nav-link" onclick="navigateTo('vehicles')">
+          <i class="fa-solid fa-car"></i>
+          <span class="nav-text">Vehicles</span>
+          <span class="nav-badge" id="badge-count-vehicles">10</span>
+        </a>
+        <a href="#slots" class="nav-link" onclick="navigateTo('slots')">
+          <i class="fa-solid fa-border-all"></i>
+          <span class="nav-text">Parking Slots</span>
+          <span class="nav-badge" id="badge-count-slots">5/96</span>
+        </a>
+        <a href="#calculator" class="nav-link" onclick="navigateTo('calculator')">
+          <i class="fa-solid fa-calculator"></i>
+          <span class="nav-text">Fee Calculator</span>
+        </a>
+        <a href="#tickets" class="nav-link" onclick="navigateTo('tickets')">
+          <i class="fa-solid fa-ticket"></i>
+          <span class="nav-text">Parking Tickets</span>
+          <span class="nav-badge" id="badge-count-tickets">5</span>
+        </a>
+
+        <div class="nav-section-title">Administration</div>
+        <a href="#categories" class="nav-link" onclick="navigateTo('categories')">
+          <i class="fa-solid fa-layer-group"></i>
+          <span class="nav-text">Vehicle Categories</span>
+        </a>
+        <a href="#reports" class="nav-link" onclick="navigateTo('reports')">
+          <i class="fa-solid fa-file-invoice-dollar"></i>
+          <span class="nav-text">Reports</span>
+        </a>
+        <a href="#about" class="nav-link" onclick="navigateTo('about')">
+          <i class="fa-solid fa-graduation-cap"></i>
+          <span class="nav-text">About Project</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="assignment-badge-box">
+          <div class="academic-avatar">
+            <i class="fa-solid fa-code"></i>
+          </div>
+          <div class="academic-details">
+            <span class="academic-role">Java Programming</span>
+            <span class="academic-sub">CO1 Assignment Project</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- =====================================================================
+         MAIN LAYOUT WRAPPER
+         ===================================================================== -->
+    <div class="main-layout" id="main-layout">
+
+      <!-- TOP STICKY HEADER -->
+      <header class="top-header">
+        <div class="header-left">
+          <button class="mobile-menu-btn" id="mobile-menu-btn" title="Open Menu">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="page-title-box">
+            <h1 id="current-page-title">Campus Smart Parking System</h1>
+            <div class="page-breadcrumb">
+              <span>Campus SPMS</span> <i class="fa-solid fa-chevron-right" style="font-size:0.6rem;"></i> <span id="current-page-crumb">Home</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <!-- Quick Search -->
+          <div class="search-input-box" style="width: 220px;">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="header-global-search" placeholder="Quick find vehicle & Enter...">
+          </div>
+
+          <!-- Live Campus Clock -->
+          <div class="campus-clock-pill">
+            <i class="fa-regular fa-clock"></i>
+            <span id="campus-live-clock">Loading time...</span>
+          </div>
+
+          <!-- Academic Indicator -->
+          <div class="academic-chip">
+            <i class="fa-solid fa-award"></i>
+            <span>JAVA CO1</span>
+          </div>
+
+          <!-- Quick Action Button -->
+          <button class="btn-park-now" onclick="navigateTo('slots')">
+            <i class="fa-solid fa-square-parking"></i>
+            <span>Park Vehicle</span>
+          </button>
+
+          <!-- Reset Demo Data -->
+          <button class="header-icon-btn" onclick="resetAllDemoData()" title="Reset Sample Demo Data">
+            <i class="fa-solid fa-rotate-right"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- ===================================================================
+           CONTENT AREA - MULTI VIEW ARCHITECTURE
+           =================================================================== -->
+      <main class="content-area">
+
+        <!-- =================================================================
+             1. HOME VIEW
+             ================================================================= -->
+        <section class="page-view active-view" id="view-home">
+          <!-- Hero Section -->
+          <div class="hero-section">
+            <div class="hero-glow-1"></div>
+            <div class="hero-glow-2"></div>
+            <div class="hero-content">
+              <div class="hero-badge">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>Smart Campus Mobility Initiative &bull; Java CO1 Assignment</span>
+              </div>
+              <h1 class="hero-title">
+                Smart Parking <span>Management System</span>
+              </h1>
+              <p class="hero-description">
+                An intelligent multi-floor campus parking automation platform. Seamlessly manage 5 parking floors, allocate real-time slots across 5 vehicle categories, calculate transparent fees, and issue verifiable digital parking tickets.
+              </p>
+              <div class="hero-cta-group">
+                <button class="btn-hero-primary" onclick="navigateTo('dashboard')">
+                  <i class="fa-solid fa-gauge-high"></i> Launch Dashboard
+                </button>
+                <button class="btn-hero-outline" onclick="navigateTo('slots')">
+                  <i class="fa-solid fa-border-all"></i> View 5-Floor Grid
+                </button>
+                <button class="btn-hero-outline" onclick="navigateTo('calculator')">
+                  <i class="fa-solid fa-calculator"></i> Fee Calculator
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Campus Stats Strip -->
+          <div class="home-stats-strip">
+            <div class="quick-stat-card">
+              <div class="stat-icon-wrapper stat-icon-blue">
+                <i class="fa-solid fa-square-parking"></i>
+              </div>
+              <div class="stat-data">
+                <h4 id="home-stat-available">91</h4>
+                <p>Available Slots Now</p>
+              </div>
+            </div>
+            <div class="quick-stat-card">
+              <div class="stat-icon-wrapper stat-icon-amber">
+                <i class="fa-solid fa-percent"></i>
+              </div>
+              <div class="stat-data">
+                <h4 id="home-stat-occupancy">5%</h4>
+                <p>Current Occupancy Rate</p>
+              </div>
+            </div>
+            <div class="quick-stat-card">
+              <div class="stat-icon-wrapper stat-icon-green">
+                <i class="fa-solid fa-car-side"></i>
+              </div>
+              <div class="stat-data">
+                <h4 id="home-stat-vehicles">10</h4>
+                <p>Registered Vehicles</p>
+              </div>
+            </div>
+            <div class="quick-stat-card">
+              <div class="stat-icon-wrapper stat-icon-purple">
+                <i class="fa-solid fa-ticket"></i>
+              </div>
+              <div class="stat-data">
+                <h4 id="home-stat-tickets">8</h4>
+                <p>Total Issued Passes</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5 Floors Overview Card -->
+          <div class="floors-overview-card">
+            <div class="card-title-group">
+              <i class="fa-solid fa-building"></i>
+              <div>
+                <h2>Multi-Floor Parking Infrastructure</h2>
+                <div class="card-subtitle">5 Specialized Floors Designed for Efficient Campus Traffic Flow</div>
+              </div>
+            </div>
+            <div class="floors-preview-list">
+              <div class="floor-preview-item" onclick="switchFloor(1); navigateTo('slots');">
+                <div class="floor-no">Floor 1</div>
+                <div class="floor-desc">EVs & Delivery Vans</div>
+                <div class="floor-cap">16 Slots &bull; Fast Chargers</div>
+              </div>
+              <div class="floor-preview-item" onclick="switchFloor(2); navigateTo('slots');">
+                <div class="floor-no">Floor 2</div>
+                <div class="floor-desc">Faculty & Staff Deck</div>
+                <div class="floor-cap">18 Slots &bull; Priority Access</div>
+              </div>
+              <div class="floor-preview-item" onclick="switchFloor(3); navigateTo('slots');">
+                <div class="floor-no">Floor 3</div>
+                <div class="floor-desc">Student Car Zone</div>
+                <div class="floor-cap">20 Slots &bull; High Capacity</div>
+              </div>
+              <div class="floor-preview-item" onclick="switchFloor(4); navigateTo('slots');">
+                <div class="floor-no">Floor 4</div>
+                <div class="floor-desc">Two-Wheelers & E-Bikes</div>
+                <div class="floor-cap">24 Slots &bull; Bike Stands</div>
+              </div>
+              <div class="floor-preview-item" onclick="switchFloor(5); navigateTo('slots');">
+                <div class="floor-no">Floor 5</div>
+                <div class="floor-desc">Visitors & Overflow</div>
+                <div class="floor-cap">18 Slots &bull; Flexible Bays</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature Cards Grid -->
+          <h2 class="home-section-title">Core Smart System Capabilities</h2>
+          <p class="home-section-subtitle">Engineered for seamless vehicular lifecycle from entry barrier to automated billing.</p>
+
+          <div class="features-grid">
+            <div class="feature-card">
+              <div class="feature-icon-circle">
+                <i class="fa-solid fa-id-card"></i>
+              </div>
+              <h3>Vehicle Management</h3>
+              <p>Register student, faculty, and visitor vehicles. Prevent duplicate registration numbers with instant client-side validation.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon-circle">
+                <i class="fa-solid fa-diagram-project"></i>
+              </div>
+              <h3>Dynamic Slot Allocation</h3>
+              <p>Visual 5-floor parking bay matrix. Assign designated slots according to vehicle dimension, EV charging, or role privilege.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon-circle">
+                <i class="fa-solid fa-receipt"></i>
+              </div>
+              <h3>Automated Fee Calculation</h3>
+              <p>Tiered tariff algorithm applying vehicle category rules, grace periods, student discounts, staff concessions, and daily rate caps.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon-circle">
+                <i class="fa-solid fa-barcode"></i>
+              </div>
+              <h3>Verifiable Ticket Passes</h3>
+              <p>Generate digital receipts containing unique serial numbers, dynamic SVG barcodes, floor location, timestamps, and print-ready layout.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon-circle">
+                <i class="fa-solid fa-bolt"></i>
+              </div>
+              <h3>EV & Green Mobility Ready</h3>
+              <p>Dedicated Level 2 EV charging slots on Floor 1, e-bike docks on Floor 4, with automatic add-on charging tariff integration.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon-circle">
+                <i class="fa-solid fa-chart-line"></i>
+              </div>
+              <h3>Comprehensive Audits & Reports</h3>
+              <p>Analyze daily traffic density, revenue by vehicle category, floor occupancy trends, and export transactions directly to CSV.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- =================================================================
+             2. DASHBOARD VIEW
+             ================================================================= -->
+        <section class="page-view" id="view-dashboard">
+          <!-- Metric KPI Cards -->
+          <div class="metrics-grid">
+            <!-- Total Slots -->
+            <div class="metric-card">
+              <div class="metric-top">
+                <span class="metric-label">Total Capacity</span>
+                <div class="metric-icon-box stat-icon-blue">
+                  <i class="fa-solid fa-building"></i>
+                </div>
+              </div>
+              <div class="metric-value-box">
+                <span class="metric-value" id="metric-total-slots">96</span>
+                <span class="metric-sub" style="color:var(--slate-500);">Across 5 Floors</span>
+              </div>
+              <div class="metric-bar-bg">
+                <div class="metric-bar-fill" style="width: 100%; background: var(--blue-500);"></div>
+              </div>
+            </div>
+
+            <!-- Available Slots -->
+            <div class="metric-card">
+              <div class="metric-top">
+                <span class="metric-label">Available Slots</span>
+                <div class="metric-icon-box stat-icon-green">
+                  <i class="fa-solid fa-circle-check"></i>
+                </div>
+              </div>
+              <div class="metric-value-box">
+                <span class="metric-value" id="metric-avail-slots">91</span>
+                <span class="metric-sub" style="color:var(--success);">Free to Park</span>
+              </div>
+              <div class="metric-bar-bg">
+                <div class="metric-bar-fill" id="metric-bar-avail" style="width: 95%; background: var(--success);"></div>
+              </div>
+            </div>
+
+            <!-- Occupied Slots -->
+            <div class="metric-card">
+              <div class="metric-top">
+                <span class="metric-label">Occupied Slots</span>
+                <div class="metric-icon-box stat-icon-amber">
+                  <i class="fa-solid fa-car-side"></i>
+                </div>
+              </div>
+              <div class="metric-value-box">
+                <span class="metric-value" id="metric-occ-slots">5</span>
+                <span class="metric-sub" style="color:var(--danger);">Vehicles Parked</span>
+              </div>
+              <div class="metric-bar-bg">
+                <div class="metric-bar-fill" id="metric-bar-occ" style="width: 5%; background: var(--danger);"></div>
+              </div>
+            </div>
+
+            <!-- Total Registered Vehicles -->
+            <div class="metric-card">
+              <div class="metric-top">
+                <span class="metric-label">Registered Vehicles</span>
+                <div class="metric-icon-box stat-icon-purple">
+                  <i class="fa-solid fa-id-card"></i>
+                </div>
+              </div>
+              <div class="metric-value-box">
+                <span class="metric-value" id="metric-total-vehicles">10</span>
+                <span class="metric-sub" style="color:var(--purple);">Students & Staff</span>
+              </div>
+              <div class="metric-bar-bg">
+                <div class="metric-bar-fill" style="width: 80%; background: var(--purple);"></div>
+              </div>
+            </div>
+
+            <!-- Parking Revenue -->
+            <div class="metric-card">
+              <div class="metric-top">
+                <span class="metric-label">Total Revenue</span>
+                <div class="metric-icon-box" style="background:#ecfdf5; color:#059669;">
+                  <i class="fa-solid fa-indian-rupee-sign"></i>
+                </div>
+              </div>
+              <div class="metric-value-box">
+                <span class="metric-value" id="metric-revenue">₹191.60</span>
+                <span class="metric-sub" style="color:#059669;">Audited Collections</span>
+              </div>
+              <div class="metric-bar-bg">
+                <div class="metric-bar-fill" style="width: 65%; background: #059669;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Action Toolbar -->
+          <div class="quick-action-strip">
+            <button class="qa-btn" onclick="openAddVehicleModal()">
+              <i class="fa-solid fa-plus-circle"></i>
+              <span>Register New Vehicle</span>
+            </button>
+            <button class="qa-btn" onclick="navigateTo('slots')">
+              <i class="fa-solid fa-square-parking"></i>
+              <span>Allocate Slot</span>
+            </button>
+            <button class="qa-btn" onclick="navigateTo('calculator')">
+              <i class="fa-solid fa-calculator"></i>
+              <span>Calculate Fee</span>
+            </button>
+            <button class="qa-btn" onclick="navigateTo('tickets')">
+              <i class="fa-solid fa-ticket"></i>
+              <span>View All Tickets</span>
+            </button>
+            <button class="qa-btn" onclick="exportDataToCsv()">
+              <i class="fa-solid fa-download"></i>
+              <span>Download CSV Report</span>
+            </button>
+          </div>
+
+          <!-- Floor Occupancy Progress & Activity Stream Layout -->
+          <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 1.5rem; margin-bottom: 2rem;">
+            <!-- 5 Floors Occupancy Monitor -->
+            <div class="card">
+              <div class="card-header-flex">
+                <div class="card-title-group">
+                  <i class="fa-solid fa-layer-group"></i>
+                  <div>
+                    <h3>5-Floor Occupancy Monitor</h3>
+                    <div class="card-subtitle">Real-Time Space Utilization across Levels</div>
+                  </div>
+                </div>
+                <button class="btn btn-sm btn-secondary" onclick="navigateTo('slots')">Explore Grid</button>
+              </div>
+              <div class="floor-bars-container" id="dashboard-floor-bars">
+                <!-- Dynamically loaded via script.js -->
+              </div>
+            </div>
+
+            <!-- Recent Parking Activity Stream -->
+            <div class="card">
+              <div class="card-header-flex">
+                <div class="card-title-group">
+                  <i class="fa-solid fa-clock-rotate-left"></i>
+                  <div>
+                    <h3>Recent Parking Activity</h3>
+                    <div class="card-subtitle">Campus Gate Check-in & Check-out Stream</div>
+                  </div>
+                </div>
+                <button class="btn btn-sm btn-outline" onclick="renderActivityLog()"><i class="fa-solid fa-rotate"></i></button>
+              </div>
+              <div id="recent-activity-container">
+                <!-- Dynamically loaded via script.js -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =================================================================
+             3. VEHICLE MANAGEMENT VIEW
+             ================================================================= -->
+        <section class="page-view" id="view-vehicles">
+          <div class="card">
+            <div class="card-header-flex">
+              <div class="card-title-group">
+                <i class="fa-solid fa-car"></i>
+                <div>
+                  <h2>Registered Vehicle Directory</h2>
+                  <div class="card-subtitle">Manage campus vehicles with duplicate registration detection</div>
+                </div>
+              </div>
+              <button class="btn btn-primary" onclick="openAddVehicleModal()">
+                <i class="fa-solid fa-plus-circle"></i> Add New Vehicle
+              </button>
+            </div>
+
+            <!-- Search and Filter Bar -->
+            <div class="controls-toolbar">
+              <div class="search-filter-group">
+                <div class="search-input-box">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <input type="text" id="vehicle-search-input" placeholder="Search by Reg No, Owner Name, or Model...">
+                </div>
+                <select class="filter-select" id="vehicle-role-filter">
+                  <option value="all">All Roles (Student/Staff/Visitor)</option>
+                  <option value="student">Students</option>
+                  <option value="staff">Faculty & Staff</option>
+                  <option value="visitor">Visitors</option>
+                </select>
+                <select class="filter-select" id="vehicle-category-filter">
+                  <option value="all">All Categories</option>
+                  <option value="two-wheeler">Two-Wheelers</option>
+                  <option value="car">Cars</option>
+                  <option value="electric-vehicle">Electric Vehicles</option>
+                  <option value="ebike">E-Bikes</option>
+                  <option value="delivery-van">Delivery Vans</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Vehicles Table -->
+            <div class="table-responsive">
+              <table class="modern-table">
+                <thead>
+                  <tr>
+                    <th>Registration No.</th>
+                    <th>Owner & Contact</th>
+                    <th>User Role</th>
+                    <th>Category & Model</th>
+                    <th>Parking Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="vehicles-table-body">
+                  <!-- Populated by script.js -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="vehicles-empty-state" style="display:none;">
+              <i class="fa-solid fa-car-tunnel empty-state-icon"></i>
+              <h3>No Vehicles Found</h3>
+              <p>No vehicles match your search or filter criteria. Try clearing filters or register a new vehicle.</p>
+              <button class="btn btn-secondary" onclick="openAddVehicleModal()">Add New Vehicle</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- =================================================================
+             4. PARKING SLOT MANAGEMENT (5 FLOORS INTERACTIVE)
+             ================================================================= -->
+        <section class="page-view" id="view-slots">
+          <div class="card">
+            <!-- 5 Floors Tab Navigation -->
+            <div class="floors-tab-nav">
+              <button class="floor-tab-btn active" data-floor="1" onclick="switchFloor(1)">
+                <i class="fa-solid fa-charging-station"></i> Floor 1 (Ground - EV & Van)
+              </button>
+              <button class="floor-tab-btn" data-floor="2" onclick="switchFloor(2)">
+                <i class="fa-solid fa-user-tie"></i> Floor 2 (Staff Reserved)
+              </button>
+              <button class="floor-tab-btn" data-floor="3" onclick="switchFloor(3)">
+                <i class="fa-solid fa-graduation-cap"></i> Floor 3 (Student Cars)
+              </button>
+              <button class="floor-tab-btn" data-floor="4" onclick="switchFloor(4)">
+                <i class="fa-solid fa-motorcycle"></i> Floor 4 (Bikes & E-Bikes)
+              </button>
+              <button class="floor-tab-btn" data-floor="5" onclick="switchFloor(5)">
+                <i class="fa-solid fa-users"></i> Floor 5 (Visitor & Overflow)
+              </button>
+            </div>
+
+            <!-- Floor Header & Controls -->
+            <div class="card-header-flex">
+              <div>
+                <h2 id="current-floor-banner-title">Floor 1 (Ground)</h2>
+                <div class="card-subtitle" id="current-floor-banner-sub">EV Charging & Delivery Hub</div>
+              </div>
+              <div class="slot-filter-row">
+                <div class="slot-legend">
+                  <div class="legend-item">
+                    <span class="legend-dot legend-available"></span>
+                    <span>Available</span>
+                  </div>
+                  <div class="legend-item">
+                    <span class="legend-dot legend-occupied"></span>
+                    <span>Occupied</span>
+                  </div>
+                  <div class="legend-item">
+                    <span class="legend-dot legend-ev"></span>
+                    <span>EV Ready</span>
+                  </div>
+                </div>
+                <div style="display:flex; gap:0.5rem;">
+                  <select class="filter-select" id="slot-status-filter">
+                    <option value="all">All Statuses</option>
+                    <option value="available">Available Only</option>
+                    <option value="occupied">Occupied Only</option>
+                  </select>
+                  <select class="filter-select" id="slot-cat-filter">
+                    <option value="all">All Slot Types</option>
+                    <option value="two-wheeler">Two-Wheeler</option>
+                    <option value="car">Car</option>
+                    <option value="electric-vehicle">Electric Vehicle</option>
+                    <option value="ebike">E-Bike</option>
+                    <option value="delivery-van">Delivery Van</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Visual Parking Bay Slot Grid -->
+            <div class="parking-floor-grid" id="parking-slots-grid">
+              <!-- Dynamically populated 16 to 24 slots for selected floor -->
+            </div>
+          </div>
+        </section>
+
+        <!-- =================================================================
+             5. PARKING FEE CALCULATOR VIEW
+             ================================================================= -->
+        <section class="page-view" id="view-calculator">
+          <div class="calculator-grid">
+            <!-- Left: Interactive Form Inputs -->
+            <div class="card">
+              <div class="card-title-group" style="margin-bottom:1.25rem;">
+                <i class="fa-solid fa-calculator"></i>
+                <div>
+                  <h2>Parking Tariff Calculator</h2>
+                  <div class="card-subtitle">Real-time simulation based on duration, role, and vehicle class</div>
+                </div>
+              </div>
+
+              <!-- Vehicle Category Selector -->
+              <div class="form-group">
+                <label class="form-label">Select Vehicle Category <span class="req">*</span></label>
+                <div class="calc-type-selector">
+                  <div class="calc-type-card selected" data-category="car" onclick="setCalculatorCategory('car')">
+                    <i class="fa-solid fa-car"></i>
+                    <div class="type-title">Car</div>
+                    <div class="type-rate">₹30 / hr</div>
+                  </div>
+                  <div class="calc-type-card" data-category="two-wheeler" onclick="setCalculatorCategory('two-wheeler')">
+                    <i class="fa-solid fa-motorcycle"></i>
+                    <div class="type-title">Two-Wheeler</div>
+                    <div class="type-rate">₹10 / hr</div>
+                  </div>
+                  <div class="calc-type-card" data-category="electric-vehicle" onclick="setCalculatorCategory('electric-vehicle')">
+                    <i class="fa-solid fa-bolt"></i>
+                    <div class="type-title">Electric Vehicle</div>
+                    <div class="type-rate">₹25 / hr</div>
+                  </div>
+                  <div class="calc-type-card" data-category="ebike" onclick="setCalculatorCategory('ebike')">
+                    <i class="fa-solid fa-bicycle"></i>
+                    <div class="type-title">E-Bike</div>
+                    <div class="type-rate">₹10 / hr</div>
+                  </div>
+                  <div class="calc-type-card" data-category="delivery-van" onclick="setCalculatorCategory('delivery-van')">
+                    <i class="fa-solid fa-truck"></i>
+                    <div class="type-title">Delivery Van</div>
+                    <div class="type-rate">₹40 / hr</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- User Role Selector -->
+              <div class="form-group">
+                <label class="form-label" for="calc-user-role">User Affiliation (Role Discount) <span class="req">*</span></label>
+                <select class="form-control" id="calc-user-role">
+                  <option value="visitor">Visitor / General Public (Standard Tariff)</option>
+                  <option value="student">Student (25% Academic Discount)</option>
+                  <option value="staff">Faculty & Staff (50% Concession)</option>
+                </select>
+                <div class="form-hint">Visitors receive the first 15 minutes free. Students & staff receive special campus rates.</div>
+              </div>
+
+              <!-- EV Fast Charging Add-on (Optional) -->
+              <div class="form-group" id="calc-ev-charging-box" style="display:none; background:var(--blue-50); padding:0.75rem 1rem; border-radius:var(--radius-md); border:1px solid var(--blue-200);">
+                <label style="display:flex; align-items:center; gap:0.5rem; font-weight:600; cursor:pointer; color:var(--navy-900);">
+                  <input type="checkbox" id="calc-ev-charging-checkbox" style="width:18px; height:18px;">
+                  <span>Add Level-2 Fast Charging Service (Flat +₹50)</span>
+                </label>
+              </div>
+
+              <!-- Datetime Inputs -->
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label class="form-label" for="calc-entry-time">Entry Date & Time</label>
+                  <input type="datetime-local" class="form-control" id="calc-entry-time">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="calc-exit-time">Exit Date & Time</label>
+                  <input type="datetime-local" class="form-control" id="calc-exit-time">
+                </div>
+              </div>
+
+              <!-- Quick Duration Presets -->
+              <div class="form-group">
+                <label class="form-label">Quick Duration Presets</label>
+                <div class="duration-quick-presets">
+                  <button type="button" class="btn-preset" onclick="setQuickDuration(0.25, this)">15 Mins (Grace)</button>
+                  <button type="button" class="btn-preset" onclick="setQuickDuration(1, this)">1 Hour</button>
+                  <button type="button" class="btn-preset active" onclick="setQuickDuration(2, this)">2 Hours</button>
+                  <button type="button" class="btn-preset" onclick="setQuickDuration(4, this)">4 Hours</button>
+                  <button type="button" class="btn-preset" onclick="setQuickDuration(8, this)">8 Hours (Full Day)</button>
+                  <button type="button" class="btn-preset" onclick="setQuickDuration(24, this)">24 Hours (Overnight)</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Itemized Bill Breakdown Receipt -->
+            <div class="receipt-preview-card">
+              <div class="receipt-header">
+                <h3>Campus Parking Tariff Receipt</h3>
+                <p>Smart Parking Management System &bull; Java CO1</p>
+              </div>
+
+              <div class="receipt-breakdown-row">
+                <span>Vehicle Classification:</span>
+                <strong id="calc-res-category">Car</strong>
+              </div>
+
+              <div class="receipt-breakdown-row">
+                <span>User Role Privilege:</span>
+                <span class="badge badge-category" id="calc-res-role">VISITOR</span>
+              </div>
+
+              <div class="receipt-breakdown-row">
+                <span>Computed Duration:</span>
+                <strong id="calc-res-duration">2h 0m</strong>
+              </div>
+
+              <div class="receipt-breakdown-row">
+                <span>Base Hourly Tariff:</span>
+                <span id="calc-res-baserate">₹30/hr (2 hrs)</span>
+              </div>
+
+              <div class="receipt-breakdown-row">
+                <span>Gross Parking Fee:</span>
+                <span id="calc-res-gross">₹60.00</span>
+              </div>
+
+              <div class="receipt-breakdown-row discount">
+                <span>Campus Role Discount:</span>
+                <span id="calc-res-discount">-0% (-₹0.00)</span>
+              </div>
+
+              <div class="receipt-breakdown-row">
+                <span>Campus Facility Surcharge (5% GST):</span>
+                <span id="calc-res-tax">+₹3.00</span>
+              </div>
+
+              <div class="receipt-total-row">
+                <span class="receipt-total-label">Total Payable:</span>
+                <span class="receipt-total-amount" id="calc-res-total">₹63.00</span>
+              </div>
+
+              <div style="margin-top:2rem;">
+                <button class="btn btn-primary" style="width:100%;" onclick="handleProceedToTicketFromCalc()">
+                  <i class="fa-solid fa-arrow-right"></i> Proceed to Allocate Slot
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =================================================================
+             6. PARKING TICKET & PRINTABLE PASS VIEW
+             ================================================================= -->
+        <section class="page-view" id="view-tickets">
+          <div class="card">
+            <div class="card-header-flex">
+              <div class="card-title-group">
+                <i class="fa-solid fa-ticket"></i>
+                <div>
+                  <h2>Parking Ticket & Pass Records</h2>
+                  <div class="card-subtitle">Active and archived campus parking passes with printable receipts</div>
+                </div>
+              </div>
+              <button class="btn btn-primary" onclick="navigateTo('slots')">
+                <i class="fa-solid fa-plus-circle"></i> Issue New Ticket (Park)
+              </button>
+            </div>
+
+            <!-- Search and Status Filter -->
+            <div class="controls-toolbar">
+              <div class="search-filter-group">
+                <div class="search-input-box">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <input type="text" id="ticket-search-input" placeholder="Search by Ticket ID, Vehicle Reg, or Slot...">
+                </div>
+                <select class="filter-select" id="ticket-status-filter">
+                  <option value="all">All Ticket Statuses</option>
+                  <option value="active">Active (Currently Parked)</option>
+                  <option value="completed">Completed (Paid & Exited)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Tickets Table -->
+            <div class="table-responsive">
+              <table class="modern-table">
+                <thead>
+                  <tr>
+                    <th>Ticket ID</th>
+                    <th>Vehicle Reg & Owner</th>
+                    <th>Floor & Slot</th>
+                    <th>Entry / Exit Timestamp</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tickets-table-body">
+                  <!-- Populated by script.js -->
+                </tbody>
+              </table>
+            </div>
+
+            <div class="empty-state" id="tickets-empty-state" style="display:none;">
+              <i class="fa-solid fa-ticket-simple empty-state-icon"></i>
+              <h3>No Tickets Found</h3>
+              <p>No parking passes match your current filter.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- =================================================================
+             7. VEHICLE CATEGORIES VIEW
+             ================================================================= -->
+        <section class="page-view" id="view-categories">
+          <div class="home-section-title" style="margin-bottom:0.35rem;">Campus Vehicle Classification</div>
+          <p class="home-section-subtitle">Dedicated parking policies, hourly tariffs, and allocated floors across 5 categories.</p>
+
+          <div class="categories-display-grid">
+            <!-- 1. Two-Wheelers -->
+            <div class="category-detail-card">
+              <div>
+                <div class="cat-header">
+                  <div class="cat-icon-lg">
+                    <i class="fa-solid fa-motorcycle"></i>
+                  </div>
+                  <div>
+                    <h3>Two-Wheelers</h3>
+                    <span class="cat-rate-badge">₹10 / hr</span>
+                  </div>
+                </div>
+                <p style="font-size:0.85rem; color:var(--slate-600); margin-bottom:1rem;">
+                  Motorcycles, scooters, and mopeds with valid campus student/faculty registration.
+                </p>
+                <div class="cat-specs-list">
+                  <div class="cat-spec-item">
+                    <span>Designated Floor:</span>
+                    <strong>Floor 4 (Level 4 Zone)</strong>
+                  </div>
+                  <div class="cat-spec-item">
+                    <span>Daily Maximum Cap:</span>
+                    <strong>₹60 / Day</strong>
+                  </div>
+                  <div class="cat-spec-item">
+                    <span>Registered in System:</span>
+                    <strong id="cat-count-reg-two-wheeler">2 Registered</strong>
+                  </div>
+                  <div class="cat-spec-item">
+                    <span>Currently Parked:</span>
+                    <strong id="cat-count-parked-two-wheeler" style="color:var(--blue-600);">1 Parked</strong>
+                  </div>
+                </div>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="viewSlotsForCategory('two-wheeler')">
+                <i class="fa-solid fa-border-all"></i> View Available Slots
+              </button>
+            </div>
+
+            <!-- 2. Cars -->
+            <div class="category-detail-card">
+              <div>
+                <div class="cat-header">
+                  <div class="cat-icon-lg">
+                    <i class="fa-solid fa-car"></i>
+                  </div>
+                  <div>
+                    <h3>Cars (Four-Wheelers)</h3>
+                    <span class="cat-rate-badge">₹30 / hr</span>
+                  </div>
+                </div>
+                <p style="font-size:0.85rem; color:var(--slate-600); margin-bottom:1rem;">
+                  Sedans, hatchbacks, and compact SUVs for faculty, students, and campus guests.
+                </p>
+                <div class="cat-specs-list">
+                  <div class="cat-spec-item">
+                    <span>Designated Floors:</span>
+                    <strong>Floor 2, 3 &amp; 5</strong>
+                  </div>
+                  <div class="cat-spec-item">
+                    <span>Daily Maximum Cap:</span>
+                    <strong>₹200 / Day</strong>
+                  </div>
+                  <div class="cat-spec-item">
+                    <span>Registered in System:</span>
+                    <strong id="cat-count-reg-car">3 Registered</strong>
+                  </div>
+                  <div class="cat-spec-item">
+                    <span>Currently Parked:</span>
+                    <strong id="cat-count-parked-car" style="color:var(--blue-600);">2 Parked</strong>
+                  </div>
+                </div>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="viewSlotsForCategory('car')">
+                <i class="fa-solid fa-border-all"></i> View Available Slots
+              </button>
+            </div>
+
+            <!-- 3. Electric Vehicles -->
+            <div class="category-detail-card">
+              <div>
+                <div class="cat-header">
+                  <div class="cat-icon-lg" style="background:#ecfdf5; color:#059669;">
+                    <i class="fa-solid fa-bolt"></i>
+                  </div>
+                  <div>
+                    <h3>Electric Vehicles (EV)</h3>
+                    <span class="cat-rate-badge" style="background:#d1fae5; color:#065f46;">₹25 / hr</span>
+                  </div>
+                </div>
+                <p style="font-size:0.85rem; color:var(--slate-600); margin-bottom:1rem;">
+                  Subsidized green mobility rate with optional Level-2 fast charging station access.
+                </p>
+                <div class="cat-specs-list">
+                  <div class="cat-spec-item">
+                    <span>Designated Floor:</span>
+                    <strong>Floor 1 (Ground Hub)</strong>
+                  </div>
+                  <div class="cat-spec-item">
+                    <span>Fast Charging Add-on:</span>
+                    <strong>+₹50 Flat</strong>
+                  </div>
+                  <div class="cat-spec-item">
+                    <span>Registered in System:</span>
+                    <strong id="cat-count-reg-electric-vehicle">2 Registered</strong>
+                  </div>
+                  <div class="cat-spec-item">
+                    <span>Currently Parked:</span>
+                    <strong id="cat-count-parked-electric-vehicle" style="color:var(--blue-600);">1 Parked</strong>
+                  </div>
+                </div>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="viewSlotsForCategory('electric-vehicle')">
+                <i class="fa-solid fa-border-all"></i> View Available Slots
+              </button>
+            </div>
+
+            <!-- 4. E-Bikes -->
+            <div class="category-detail-card">
+              <div>
+                <div class="cat-header">
+                  <div class="cat-icon-lg" style="background:#fef3c7; color:#d97706;">
+                    <i class="fa-solid fa-bicycle"></i>
+                  </div>
+                  <div>
+                    <h3>E-Bikes &amp; Cycles</h3>
+                    <span class="cat-rate-badge" style="background:#fef3c7; color:#92400e;">₹10 / hr</span>
+                  </div>
+                </div>
+                <p style="font-size:0.85rem; color:var(--slate-600); margin-bottom:1rem;">
+                  Eco-friendly student bicycles and battery-assisted personal mobility devices.
+                </p>
+                <div class="cat-specs-list">
+                  <div class="cat-spec-item">
+                    <span>Designated Floor:</span>
+                    <strong>Floor 4 (East Wing)</strong>
+                  </div>
+                  <div class="cat-spec-item">
+                    <span>Daily Maximum Cap:</span>
+                    <strong>₹50 / Day</strong>
+                  </div>
+                  <div class="cat-spec-item">
+                    <span>Registered in System:</span>
+                    <strong id="cat-count-reg-ebike">1 Registered</strong>
+                  </div>
+                  <div class="cat-spec-item">
+                    <span>Currently Parked:</span>
+                    <strong id="cat-count-parked-ebike" style="color:var(--blue-600);">0 Parked</strong>
+                  </div>
+                </div>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="viewSlotsForCategory('ebike')">
+                <i class="fa-solid fa-border-all"></i> View Available Slots
+              </button>
+            </div>
+
+            <!-- 5. Delivery Vans -->
+            <div class="category-detail-card">
+              <div>
+                <div class="cat-header">
+                  <div class="cat-icon-lg" style="background:#ede9fe; color:#7c3aed;">
+                    <i class="fa-solid fa-truck"></i>
+                  </div>
+                  <div>
+                    <h3>Delivery Vans</h3>
+                    <span class="cat-rate-badge" style="background:#ede9fe; color:#5b21b6;">₹40 / hr</span>
+                  </div>
+                </div>
+                <p style="font-size:0.85rem; color:var(--slate-600); margin-bottom:1rem;">
+                  Campus couriers, catering trucks, cafeteria suppliers, and maintenance utility vans.
+                </p>
+                <div class="cat-specs-list">
+                  <div class="cat-spec-item">
+                    <span>Designated Floor:</span>
+                    <strong>Floor 1 (Ground Loading Bay)</strong>
+                  </div>
+                  <div class="cat-spec-item">
+                    <span>Daily Maximum Cap:</span>
+                    <strong>₹250 / Day</strong>
+                  </div>
+                  <div class="cat-spec-item">
+                    <span>Registered in System:</span>
+                    <strong id="cat-count-reg-delivery-van">2 Registered</strong>
+                  </div>
+                  <div class="cat-spec-item">
+                    <span>Currently Parked:</span>
+                    <strong id="cat-count-parked-delivery-van" style="color:var(--blue-600);">1 Parked</strong>
+                  </div>
+                </div>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="viewSlotsForCategory('delivery-van')">
+                <i class="fa-solid fa-border-all"></i> View Available Slots
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- =================================================================
+             8. REPORTS & ANALYTICS VIEW
+             ================================================================= -->
+        <section class="page-view" id="view-reports">
+          <div class="card-header-flex" style="margin-bottom:1.5rem;">
+            <div>
+              <h2 class="home-section-title" style="margin-bottom:0.25rem;">Analytics &amp; Management Reports</h2>
+              <div class="card-subtitle">Comprehensive campus parking metrics, revenue audits, and space utilization</div>
+            </div>
+            <div style="display:flex; gap:0.75rem;">
+              <button class="btn btn-primary" onclick="exportDataToCsv()">
+                <i class="fa-solid fa-file-csv"></i> Export CSV
+              </button>
+              <button class="btn btn-secondary" onclick="window.print()">
+                <i class="fa-solid fa-print"></i> Print Report
+              </button>
+            </div>
+          </div>
+
+          <!-- Summary KPI Cards -->
+          <div class="reports-summary-row">
+            <div class="quick-stat-card">
+              <div class="stat-icon-wrapper stat-icon-blue">
+                <i class="fa-solid fa-square-parking"></i>
+              </div>
+              <div class="stat-data">
+                <h4 id="rep-total-slots">96</h4>
+                <p>Campus Slots</p>
+              </div>
+            </div>
+            <div class="quick-stat-card">
+              <div class="stat-icon-wrapper stat-icon-amber">
+                <i class="fa-solid fa-chart-simple"></i>
+              </div>
+              <div class="stat-data">
+                <h4 id="rep-occupancy-rate">5%</h4>
+                <p>Overall Occupancy</p>
+              </div>
+            </div>
+            <div class="quick-stat-card">
+              <div class="stat-icon-wrapper stat-icon-green">
+                <i class="fa-solid fa-money-bill-trend-up"></i>
+              </div>
+              <div class="stat-data">
+                <h4 id="rep-total-revenue">₹191.60</h4>
+                <p>Total Revenue Paid</p>
+              </div>
+            </div>
+            <div class="quick-stat-card">
+              <div class="stat-icon-wrapper stat-icon-purple">
+                <i class="fa-solid fa-receipt"></i>
+              </div>
+              <div class="stat-data">
+                <h4 id="rep-total-tickets">8</h4>
+                <p>Total Passes Audited</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts and Analytics Grid -->
+          <div class="charts-row-grid">
+            <!-- Simulated Peak Parking Density Bar Chart -->
+            <div class="chart-container-box">
+              <div class="card-header-flex">
+                <div class="card-title-group">
+                  <i class="fa-solid fa-chart-column"></i>
+                  <div>
+                    <h3>Daily Parking Traffic Density</h3>
+                    <div class="card-subtitle">Peak check-in frequency across campus hours</div>
+                  </div>
+                </div>
+                <span class="badge badge-category">Today's Curve</span>
+              </div>
+
+              <div class="css-bar-chart">
+                <div class="chart-bar-col">
+                  <div class="chart-bar-pillar" style="height: 25%;">
+                    <span class="chart-pillar-val">12</span>
+                  </div>
+                  <span class="chart-bar-label">08:00</span>
+                </div>
+                <div class="chart-bar-col">
+                  <div class="chart-bar-pillar" style="height: 65%;">
+                    <span class="chart-pillar-val">34</span>
+                  </div>
+                  <span class="chart-bar-label">10:00</span>
+                </div>
+                <div class="chart-bar-col">
+                  <div class="chart-bar-pillar" style="height: 85%;">
+                    <span class="chart-pillar-val">52</span>
+                  </div>
+                  <span class="chart-bar-label">12:00</span>
+                </div>
+                <div class="chart-bar-col">
+                  <div class="chart-bar-pillar" style="height: 70%;">
+                    <span class="chart-pillar-val">41</span>
+                  </div>
+                  <span class="chart-bar-label">14:00</span>
+                </div>
+                <div class="chart-bar-col">
+                  <div class="chart-bar-pillar" style="height: 45%;">
+                    <span class="chart-pillar-val">28</span>
+                  </div>
+                  <span class="chart-bar-label">16:00</span>
+                </div>
+                <div class="chart-bar-col">
+                  <div class="chart-bar-pillar" style="height: 20%;">
+                    <span class="chart-pillar-val">10</span>
+                  </div>
+                  <span class="chart-bar-label">18:00</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Vehicle Category Distribution -->
+            <div class="chart-container-box">
+              <div class="card-header-flex">
+                <div class="card-title-group">
+                  <i class="fa-solid fa-pie-chart"></i>
+                  <div>
+                    <h3>Vehicle Category Share</h3>
+                    <div class="card-subtitle">Breakdown of registered campus fleet</div>
+                  </div>
+                </div>
+              </div>
+              <div id="rep-cat-distribution">
+                <!-- Populated by script.js -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Floor Occupancy Distribution Card -->
+          <div class="card">
+            <div class="card-header-flex">
+              <div class="card-title-group">
+                <i class="fa-solid fa-layer-group"></i>
+                <div>
+                  <h3>Floor Occupancy Breakdown</h3>
+                  <div class="card-subtitle">Utilization rate by floor deck</div>
+                </div>
+              </div>
+            </div>
+            <div id="rep-floor-breakdown">
+              <!-- Populated by script.js -->
+            </div>
+          </div>
+        </section>
+
+        <!-- =================================================================
+             9. ABOUT PROJECT VIEW (JAVA PROGRAMMING CO1 ACADEMIC PROFILE)
+             ================================================================= -->
+        <section class="page-view" id="view-about">
+          <div class="about-grid">
+            <!-- Academic Profile Card -->
+            <div class="academic-info-banner">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem;">
+                <div>
+                  <span class="badge" style="background:rgba(255,255,255,0.15); color:#fff; border:1px solid rgba(255,255,255,0.3); margin-bottom:0.75rem;">
+                    Academic Assignment Submission
+                  </span>
+                  <h1 style="font-size:2rem; font-weight:800; color:#fff; margin-bottom:0.35rem;">
+                    Smart Parking Management System
+                  </h1>
+                  <p style="color:var(--blue-200); font-size:1rem;">
+                    Course: Java Programming (Course Outcome 1 - CO1)
+                  </p>
+                </div>
+                <div style="background:rgba(0,180,216,0.25); border:1px solid var(--blue-400); padding:0.6rem 1.25rem; border-radius:var(--radius-md); text-align:right;">
+                  <div style="font-size:0.75rem; color:var(--blue-200); text-transform:uppercase; font-weight:700;">Status</div>
+                  <div style="font-size:1.1rem; font-weight:800; color:#fff;">Complete &amp; Verified</div>
+                </div>
+              </div>
+
+              <!-- Student Credential Strip -->
+              <div class="student-card-grid">
+                <div class="student-meta-item">
+                  <div class="meta-label">Course Name</div>
+                  <div class="meta-val">Java Programming</div>
+                </div>
+                <div class="student-meta-item">
+                  <div class="meta-label">Course Outcome</div>
+                  <div class="meta-val">CO1: OOP &amp; System Modeling</div>
+                </div>
+                <div class="student-meta-item">
+                  <div class="meta-label">Department</div>
+                  <div class="meta-val">Computer Science &amp; Engg.</div>
+                </div>
+                <div class="student-meta-item">
+                  <div class="meta-label">System Architecture</div>
+                  <div class="meta-val">Responsive Web Client (SPA)</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Problem Statement, Objectives, Scope, Features -->
+            <div class="about-features-columns">
+              <!-- Problem Statement -->
+              <div class="about-box">
+                <h3><i class="fa-solid fa-triangle-exclamation"></i> Problem Statement</h3>
+                <p>
+                  Educational campuses suffer from recurring vehicular congestion, unauthorized parking in faculty zones, time wastage searching for unoccupied slots, and paper ticketing errors. Traditional gatekeepers lack real-time visibility into multi-floor capacity and fail to apply transparent role-based tariff discounts.
+                </p>
+              </div>
+
+              <!-- Objectives -->
+              <div class="about-box">
+                <h3><i class="fa-solid fa-bullseye"></i> Project Objectives</h3>
+                <ul>
+                  <li><i class="fa-solid fa-check"></i> Automate slot allocation across 5 distinct parking floors.</li>
+                  <li><i class="fa-solid fa-check"></i> Eliminate duplicate vehicle registration via validation checks.</li>
+                  <li><i class="fa-solid fa-check"></i> Implement transparent multi-role tariff calculation engine.</li>
+                  <li><i class="fa-solid fa-check"></i> Generate verifiable digital parking tickets with barcode &amp; timestamps.</li>
+                  <li><i class="fa-solid fa-check"></i> Offer rich auditing, floor occupancy reports, and CSV data export.</li>
+                </ul>
+              </div>
+
+              <!-- Scope -->
+              <div class="about-box">
+                <h3><i class="fa-solid fa-compass"></i> System Scope</h3>
+                <p>
+                  Designed specifically for multi-tier university parking complexes. Accommodates 96 slots across 5 specialized floors catering to 5 vehicle categories: Two-Wheelers, Four-Wheelers, Electric Vehicles with charging bays, E-Bikes, and Campus Delivery Vans.
+                </p>
+              </div>
+
+              <!-- Technologies Used -->
+              <div class="about-box">
+                <h3><i class="fa-solid fa-code"></i> Technologies Used</h3>
+                <ul>
+                  <li><i class="fa-solid fa-check"></i> <strong>HTML5:</strong> Semantic markup, forms, modals, SVGs.</li>
+                  <li><i class="fa-solid fa-check"></i> <strong>CSS3:</strong> Modern flexbox, CSS grid, variables, print queries.</li>
+                  <li><i class="fa-solid fa-check"></i> <strong>JavaScript (ES6+):</strong> Stateful routing, data engine, timers.</li>
+                  <li><i class="fa-solid fa-check"></i> <strong>LocalStorage API:</strong> Client-side persistence for assignment demo.</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Java OOP Mapping (Academic Connection to Course Outcome 1) -->
+            <div class="oop-mapping-card">
+              <div class="card-title-group">
+                <i class="fa-solid fa-diagram-project"></i>
+                <div>
+                  <h2 style="color:var(--navy-900);">Mapping to Java OOP Concepts (CO1 Alignment)</h2>
+                  <div class="card-subtitle">How this web dashboard maps directly to Java Class Hierarchy &amp; Object-Oriented Principles</div>
+                </div>
+              </div>
+
+              <div class="oop-grid">
+                <div class="oop-item">
+                  <div class="oop-title">Encapsulation &amp; Entities</div>
+                  <span class="oop-class">class Vehicle</span>
+                  <div class="oop-desc">
+                    Private attributes (regNo, owner, role, category) with getters/setters, input validation, and unique constraint checking.
+                  </div>
+                </div>
+
+                <div class="oop-item">
+                  <div class="oop-title">Inheritance Hierarchy</div>
+                  <span class="oop-class">Car, TwoWheeler, EVehicle extends Vehicle</span>
+                  <div class="oop-desc">
+                    Subclasses inherit common vehicle properties while defining specific hourly tariffs and fast charging capabilities.
+                  </div>
+                </div>
+
+                <div class="oop-item">
+                  <div class="oop-title">Polymorphism (Tariff Strategy)</div>
+                  <span class="oop-class">interface TariffCalculator</span>
+                  <div class="oop-desc">
+                    Different fee calculation algorithms execute dynamically based on the runtime vehicle instance and role discounts.
+                  </div>
+                </div>
+
+                <div class="oop-item">
+                  <div class="oop-title">Aggregation &amp; Composition</div>
+                  <span class="oop-class">class ParkingFloor &bull; ParkingSlot</span>
+                  <div class="oop-desc">
+                    A Campus ParkingLot has a 1-to-many relationship with 5 ParkingFloors, which in turn contain 16-24 ParkingSlots.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- FOOTER -->
+      <footer style="padding:1.5rem 2rem; border-top:1px solid var(--slate-200); background:var(--white); font-size:0.82rem; color:var(--slate-500); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+        <div>
+          <strong>Smart Parking Management System</strong> &bull; Java Programming CO1 Academic Project.
+        </div>
+        <div style="display:flex; gap:1.25rem;">
+          <a href="#about" onclick="navigateTo('about')" style="color:var(--blue-600); font-weight:600;">Documentation</a>
+          <a href="#dashboard" onclick="navigateTo('dashboard')" style="color:var(--blue-600); font-weight:600;">Dashboard</a>
+          <button onclick="resetAllDemoData()" style="color:var(--slate-600); font-weight:600; cursor:pointer;">Reset Demo Data</button>
+        </div>
+      </footer>
+
+    </div><!-- /main-layout -->
+
+  </div><!-- /app-container -->
+
+  <!-- =======================================================================
+       MODAL 1: ADD / EDIT VEHICLE (With Duplicate Registration Checking)
+       ======================================================================= -->
+  <div class="modal-overlay" id="modal-vehicle-form">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="veh-modal-title"><i class="fa-solid fa-car"></i> Add New Vehicle</h3>
+        <button class="modal-close-btn" onclick="closeModal('modal-vehicle-form')">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <form id="form-vehicle">
+        <div class="modal-body">
+          <div class="alert-box alert-danger" id="veh-form-error" style="display:none;"></div>
+
+          <div class="form-group">
+            <label class="form-label" for="veh-reg-number">Vehicle Registration Number <span class="req">*</span></label>
+            <input type="text" class="form-control" id="veh-reg-number" placeholder="e.g. TN-09-AX-2024 or KA-01-MJ-4589" required style="font-family:var(--font-mono); text-transform:uppercase;">
+            <div class="form-hint">Duplicate registration check is enforced automatically.</div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label" for="veh-owner-name">Owner Full Name <span class="req">*</span></label>
+              <input type="text" class="form-control" id="veh-owner-name" placeholder="e.g. Dr. Ramesh Kumar" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="veh-contact">Contact Phone / Email</label>
+              <input type="text" class="form-control" id="veh-contact" placeholder="e.g. 9840123456">
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label" for="veh-category">Vehicle Category <span class="req">*</span></label>
+              <select class="form-control" id="veh-category" required>
+                <option value="car">Car (₹30/hr)</option>
+                <option value="two-wheeler">Two-Wheeler (₹10/hr)</option>
+                <option value="electric-vehicle">Electric Vehicle (₹25/hr)</option>
+                <option value="ebike">E-Bike (₹10/hr)</option>
+                <option value="delivery-van">Delivery Van (₹40/hr)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="veh-role">Campus User Role <span class="req">*</span></label>
+              <select class="form-control" id="veh-role" required>
+                <option value="student">Student (25% Discount)</option>
+                <option value="staff">Faculty &amp; Staff (50% Concession)</option>
+                <option value="visitor">Visitor / Guest</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="veh-model">Vehicle Make / Model &amp; Color</label>
+            <input type="text" class="form-control" id="veh-model" placeholder="e.g. Honda City White or TVS Jupiter Blue">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal('modal-vehicle-form')">Cancel</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-floppy-disk"></i> Save Vehicle Record
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL 2: ALLOCATE PARKING SLOT
+       ======================================================================= -->
+  <div class="modal-overlay" id="modal-allocate-slot">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-square-parking"></i> Allocate Parking Slot: <span id="alloc-slot-id" style="color:var(--blue-600); font-family:var(--font-mono);">F1-01</span></h3>
+        <button class="modal-close-btn" onclick="closeModal('modal-allocate-slot')">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <form id="form-allocate-slot">
+        <div class="modal-body">
+          <div class="alert-box alert-danger" id="alloc-form-error" style="display:none;"></div>
+
+          <div style="background:var(--blue-50); border:1px solid var(--blue-200); border-radius:var(--radius-md); padding:0.85rem 1.15rem; margin-bottom:1.25rem;">
+            <div style="font-size:0.8rem; color:var(--slate-500); font-weight:600;">Selected Location:</div>
+            <div style="font-size:1.05rem; font-weight:800; color:var(--navy-900);" id="alloc-floor-name">Floor 1 (Ground Hub)</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="alloc-vehicle-select">Select Registered Vehicle</label>
+            <select class="form-control" id="alloc-vehicle-select">
+              <option value="">-- Choose from Registered Vehicles --</option>
+            </select>
+            <div class="form-hint">Shows vehicles that are not currently parked in any bay.</div>
+          </div>
+
+          <div style="text-align:center; margin:1rem 0; font-size:0.8rem; color:var(--slate-400); font-weight:700;">
+            &mdash; OR ASSIGN TO VISITOR / GUEST VEHICLE &mdash;
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="alloc-guest-reg">Guest Vehicle Registration Number</label>
+            <input type="text" class="form-control" id="alloc-guest-reg" placeholder="e.g. DL-04-AB-9988" style="font-family:var(--font-mono); text-transform:uppercase;">
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label" for="alloc-guest-owner">Guest / Driver Name</label>
+              <input type="text" class="form-control" id="alloc-guest-owner" placeholder="e.g. Campus Visitor">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="alloc-guest-role">User Type</label>
+              <select class="form-control" id="alloc-guest-role">
+                <option value="visitor">Visitor</option>
+                <option value="student">Student</option>
+                <option value="staff">Staff</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label" for="alloc-guest-cat">Vehicle Category</label>
+              <select class="form-control" id="alloc-guest-cat">
+                <option value="car">Car</option>
+                <option value="two-wheeler">Two-Wheeler</option>
+                <option value="electric-vehicle">Electric Vehicle</option>
+                <option value="ebike">E-Bike</option>
+                <option value="delivery-van">Delivery Van</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="alloc-entry-time">Entry Timestamp</label>
+              <input type="datetime-local" class="form-control" id="alloc-entry-time">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal('modal-allocate-slot')">Cancel</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-check-circle"></i> Confirm Allocation &amp; Issue Ticket
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL 3: RELEASE PARKING SLOT / CHECKOUT & BILLING
+       ======================================================================= -->
+  <div class="modal-overlay" id="modal-release-slot">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-arrow-right-from-bracket"></i> Slot Checkout: <span id="rel-slot-id" style="color:var(--danger); font-family:var(--font-mono);">F1-01</span></h3>
+        <button class="modal-close-btn" onclick="closeModal('modal-release-slot')">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="background:var(--slate-50); border:1px solid var(--slate-200); border-radius:var(--radius-md); padding:1.25rem; margin-bottom:1.25rem;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+            <span style="font-size:0.85rem; color:var(--slate-500);">Vehicle Registration:</span>
+            <span class="reg-number-cell" id="rel-veh-reg">TN-07-EV-8821</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+            <span style="font-size:0.85rem; color:var(--slate-500);">Driver / Owner:</span>
+            <strong id="rel-veh-owner">Priya Sundaram</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+            <span style="font-size:0.85rem; color:var(--slate-500);">Vehicle Class:</span>
+            <span class="badge badge-category" id="rel-category">Electric Vehicle</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+            <span style="font-size:0.85rem; color:var(--slate-500);">Entry Time:</span>
+            <span id="rel-entry-time" style="font-weight:600;">11:00 AM</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+            <span style="font-size:0.85rem; color:var(--slate-500);">Total Parked Duration:</span>
+            <strong id="rel-duration" style="color:var(--navy-900);">2h 30m</strong>
+          </div>
+        </div>
+
+        <!-- Tariff Breakdown in Release Modal -->
+        <div style="border-top:1px dashed var(--slate-300); padding-top:1rem; margin-bottom:1rem;">
+          <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.35rem;">
+            <span>Base Hourly Rate:</span>
+            <span id="rel-base-rate">₹25/hr</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.35rem; color:var(--success);">
+            <span>Role Discount Applied:</span>
+            <span id="rel-discount">25% (-₹15.62)</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.35rem;">
+            <span>Campus Surcharge (5%):</span>
+            <span id="rel-tax">+₹2.50</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.75rem; padding-top:0.75rem; border-top:2px solid var(--navy-900);">
+            <strong style="font-size:1.15rem; color:var(--navy-900);">Total Amount Due:</strong>
+            <strong style="font-size:1.8rem; color:var(--blue-600);" id="rel-total-fee">₹52.50</strong>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('modal-release-slot')">Keep Parked</button>
+        <button type="button" class="btn btn-danger" onclick="handleReleaseSlotConfirm()">
+          <i class="fa-solid fa-receipt"></i> Process Payment &amp; Release Slot
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL 4: VIEW / PRINT PARKING TICKET (Thermal Receipt Pass Layout)
+       ======================================================================= -->
+  <div class="modal-overlay" id="modal-view-ticket">
+    <div class="modal-dialog" style="max-width:440px;">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-ticket"></i> Campus Parking Ticket</h3>
+        <button class="modal-close-btn" onclick="closeModal('modal-view-ticket')">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal-body" style="padding:1.25rem;">
+        <!-- Printable Receipt Pass -->
+        <div class="printable-ticket" id="printable-ticket-content">
+          <div class="ticket-top-banner">
+            <div class="ticket-institution">CAMPUS SMART PARKING</div>
+            <div class="ticket-name">PARKING PASS</div>
+            <div class="ticket-id-tag" id="tkt-view-id">TKT-20261115-0101</div>
+          </div>
+
+          <div class="ticket-slot-highlight">
+            <div style="font-size:0.72rem; text-transform:uppercase; font-weight:700; color:var(--blue-600);">Assigned Space</div>
+            <div class="floor-slot-text" id="tkt-view-slot">F1-01</div>
+          </div>
+
+          <div class="ticket-data-grid">
+            <div class="ticket-data-item">
+              <div class="t-label">Vehicle Reg.</div>
+              <div class="t-value" id="tkt-view-reg">TN-07-EV-8821</div>
+            </div>
+            <div class="ticket-data-item">
+              <div class="t-label">Category</div>
+              <div class="t-value" id="tkt-view-category">Electric Vehicle</div>
+            </div>
+            <div class="ticket-data-item">
+              <div class="t-label">User Role</div>
+              <div class="t-value" id="tkt-view-role">STUDENT</div>
+            </div>
+            <div class="ticket-data-item">
+              <div class="t-label">Duration</div>
+              <div class="t-value" id="tkt-view-duration">2h 30m</div>
+            </div>
+            <div class="ticket-data-item">
+              <div class="t-label">Entry Time</div>
+              <div class="t-value" id="tkt-view-entry" style="font-size:0.78rem;">15 Nov 2026, 09:00</div>
+            </div>
+            <div class="ticket-data-item">
+              <div class="t-label">Exit Time</div>
+              <div class="t-value" id="tkt-view-exit" style="font-size:0.78rem;">In Campus</div>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; background:var(--slate-100); padding:0.6rem 0.85rem; border-radius:4px; margin-bottom:1rem;">
+            <strong style="font-size:0.85rem; color:var(--navy-900);">AMOUNT / STATUS:</strong>
+            <span style="font-size:1.15rem; font-weight:900; color:var(--blue-600);" id="tkt-view-amount">₹52.50</span>
+          </div>
+
+          <div style="text-align:center; margin-bottom:0.75rem;">
+            <span class="badge badge-available" id="tkt-view-status" style="font-size:0.8rem; letter-spacing:0.5px;">PAID &amp; VERIFIED</span>
+          </div>
+
+          <!-- Barcode Generation -->
+          <div class="ticket-barcode-box">
+            <svg class="ticket-barcode-svg" id="tkt-barcode-svg"></svg>
+            <div class="ticket-barcode-number" id="tkt-barcode-num">* TKT-20261115-0101 *</div>
+            <div class="ticket-footer-note">
+              Please present this pass at the exit automated boom barrier. Java CO1 Assignment Project.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('modal-view-ticket')">Close</button>
+        <button type="button" class="btn btn-primary" onclick="printCurrentTicket()">
+          <i class="fa-solid fa-print"></i> Print Ticket
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Main JavaScript File -->
+  <script src="script.js"></script>
+</body>
+</html>
